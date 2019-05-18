@@ -1,21 +1,50 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 
 const set = new Set();
 
-export default function Callback() {
-    const [c1, setC1] = useState(1);
-    const [c2, setC2] = useState(1);
-    const increment1 = useCallback(()=> setC1(c1+1), [c1]);
-    const increment2 = useCallback(()=> setC2(c2+1), [c2]);
-    set.add(increment1);
-    set.add(increment2);
+function Callback() {
+    const [count, setCount] = useState(1);
+    const [val, setVal] = useState('');
+
+    const callback = useCallback(() => {
+        console.log(count);
+    }, [count]);
+    set.add(callback);
+
 
     return <div>
-        <h4>{c1} -{c2}</h4>
-        <div>
-            <button onClick={increment1}>+c1</button>
-            <button onClick={increment2}>+c2</button>
-        </div>
+        <h4>{count}</h4>
         <h4>{set.size}</h4>
+        <div>
+            <button onClick={() => setCount(count + 1)}>+</button>
+            <input value={val} onChange={event => setVal(event.target.value)}/>
+        </div>
+    </div>;
+}
+
+export default function Parent() {
+    const [count, setCount] = useState(1);
+    const [val, setVal] = useState('');
+
+    const callback = useCallback(() => {
+        return count;
+    }, [count]);
+    return <div>
+        <h4>{count}</h4>
+        <Child callback={callback}/>
+        <div>
+            <button onClick={() => setCount(count + 1)}>+</button>
+            <input value={val} onChange={event => setVal(event.target.value)}/>
+        </div>
+    </div>;
+}
+
+function Child({ callback }) {
+    const [count, setCount] = useState(() => callback());
+    useEffect(() => {
+        setCount(callback());
+    }, [callback]);
+    return <div>
+        {count}
     </div>
 }

@@ -1,29 +1,48 @@
 import React, { useState, useMemo } from 'react';
 
-export default function Memo() {
-    const [c1, setC1] = useState(1);
-    const [c2, setC2] = useState(1);
-    const e1 = useMemo(() => {
+function WithoutMemo() {
+    const [count, setCount] = useState(1);
+    const [val, setValue] = useState('');
+    function expensive() {
+        console.log('compute');
         let sum = 0;
-        for (let i = 0; i < c1 * 100; i++) {
+        for (let i = 0; i < count * 100; i++) {
             sum += i;
         }
         return sum;
-    }, [c1]);
+    }
 
-    const e2 = useMemo(() => {
-        let sum = 0;
-        for (let i = 0; i < c2 * 100; i++) {
-            sum += i;
-        }
-        return sum;
-    }, [c2]);
     return <div>
-        <h4>{c1}-{c2}</h4>
-        <h4>{e1}-{e2}</h4>
+        <h4>{count}-{expensive()}</h4>
+        {val}
         <div>
-            <button onClick={() => setC1(c1+1)}>+c1</button>
-            <button onClick={() => setC2(c2+1)}>+c2</button>
+            <button onClick={() => setCount(count + 1)}>+c1</button>
+            <input value={val} onChange={event => setValue(event.target.value)}/>
         </div>
     </div>;
 }
+
+
+export default function WithMemo() {
+    const [count, setCount] = useState(1);
+    const [val, setValue] = useState('');
+    const expensive = useMemo(() => {
+        console.log('compute');
+        let sum = 0;
+        for (let i = 0; i < count * 100; i++) {
+            sum += i;
+        }
+        return sum;
+    }, [count]);
+
+    return <div>
+        <h4>{count}-{expensive}</h4>
+        {val}
+        <div>
+            <button onClick={() => setCount(count + 1)}>+c1</button>
+            <input value={val} onChange={event => setValue(event.target.value)}/>
+        </div>
+    </div>;
+}
+
+

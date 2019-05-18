@@ -7,7 +7,7 @@ import './App.css';
 export default function App() {
     return <div>
         <Callback/>
-        <Memo/>
-        <Effect/>
+        {/*<Memo/>*/}
+        {/*<Effect/>*/}
     </div>;
 }
